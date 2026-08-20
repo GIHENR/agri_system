@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AgriManage Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#dfe0e0",
+                        "secondary": "#5d5f5f",
+                        "surface-container-high": "#e8e8e8",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454747",
+                        "background": "#f9f9f9",
+                        "inverse-surface": "#303030",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c2c9bb",
+                        "surface-dim": "#dadada",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-fixed": "#dde4dd",
+                        "on-surface": "#1b1b1b",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c1c8c1",
+                        "primary": "#154212",
+                        "surface-container-low": "#f3f3f3",
+                        "outline": "#72796e",
+                        "primary-container": "#2d5a27",
+                        "on-tertiary-container": "#bec5bd",
+                        "on-tertiary-fixed": "#161d19",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#002201",
+                        "surface-tint": "#3b6934",
+                        "on-secondary-container": "#616363",
+                        "surface-bright": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#414843",
+                        "primary-fixed": "#bcf0ae",
+                        "surface": "#f9f9f9",
+                        "primary-fixed-dim": "#a1d494",
+                        "surface-container": "#eeeeee",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1b1b1b",
+                        "on-primary-container": "#9dd090",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#4b524c",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-surface-variant": "#42493e",
+                        "tertiary": "#343b36",
+                        "inverse-primary": "#a1d494"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "sm": "12px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-lg h-full flex antialiased">
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold">
+            AM
+        </div>
+        <div>
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">AgriManage</h1>
+            <p class="font-label-md text-label-md text-on-surface-variant">Farm Operations</p>
+        </div>
+    </div>
+    <nav class="flex-1 flex flex-col gap-sm">
+        <!-- Dashboard -->
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors" th:href="@{/}">
+            <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100" th:href="@{/crop_inventory}">
+            <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+            <span>Crop Inventory</span>
+        </a>
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100" th:href="@{/order_m}">
+            <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+            <span>Orders</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300 mt-auto" th:href="@{/logout}">
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+    <!-- TopNavBar -->
+    <header class="bg-surface fixed top-0 right-0 w-[calc(100%-16rem)] z-40 border-b border-outline-variant flex justify-between items-center h-16 px-margin-desktop">
+        <div class="flex items-center">
+            <h2 class="font-title-lg text-title-lg text-primary font-bold">AgriManage Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-md border border-outline-variant rounded-full px-md py-xs bg-surface-container-lowest">
+            <span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+            <input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant w-48" placeholder="Search..." type="text"/>
+        </div>
+
+        <!-- Display Dynamic User Name and Role -->
+        <div class="flex flex-col text-right">
+    <span class="font-title-lg text-title-lg text-on-surface text-[16px]"
+          th:text="${loggedInUser?.username}">John Doe</span>
+
+            <span class="font-label-md text-label-md text-primary"
+                  th:text="${loggedInUser?.role}">Farmer</span>
+        </div>
+    </header>
+    <!-- Canvas -->
+    <main class="flex-1 pt-24 px-margin-desktop pb-margin-desktop bg-[#F0F7EF]">
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-xl">
+            <!-- Card 1 (Dynamic Total Stock) -->
+            <div class="bg-surface-container-lowest rounded-xl p-lg border border-[#E0E7E0] shadow-[0_4px_12px_rgba(45,90,39,0.05)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                <div>
+                    <div class="flex justify-between items-center mb-md relative z-10">
+                        <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Crops in Stock</span>
+                        <span class="material-symbols-outlined text-primary" data-icon="grass">grass</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-on-surface relative z-10">
+                        <span th:text="${totalStock != null ? #numbers.formatDecimal(totalStock, 1, 'COMMA', 0, 'POINT') : 0}">0</span>
+                        <span class="font-title-lg text-title-lg text-on-surface-variant">Units</span>
+                    </div>
+                </div>
+                <div class="mt-md flex items-center text-primary-container font-label-md text-label-md bg-primary-container/10 w-fit px-sm py-xs rounded-full relative z-10">
+                    <span class="material-symbols-outlined text-[16px] mr-xs" data-icon="trending_up">trending_up</span>
+                    Live Data
+                </div>
+            </div>
+            <!-- Card 2 (Dynamic Pending Orders) -->
+            <div class="bg-surface-container-lowest rounded-xl p-lg border border-[#E0E7E0] shadow-[0_4px_12px_rgba(45,90,39,0.05)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-error/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                <div>
+                    <div class="flex justify-between items-center mb-md relative z-10">
+                        <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Pending Orders</span>
+                        <span class="material-symbols-outlined text-error" data-icon="local_shipping">local_shipping</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-on-surface relative z-10">
+                        <span th:text="${pendingOrders}">0</span>
+                        <span class="font-title-lg text-title-lg text-on-surface-variant">Orders</span>
+                    </div>
+                </div>
+                <div class="mt-md flex items-center text-error font-label-md text-label-md bg-error/10 w-fit px-sm py-xs rounded-full relative z-10">
+                    <span class="material-symbols-outlined text-[16px] mr-xs" data-icon="warning">warning</span>
+                    Requires attention
+                </div>
+            </div>
+            <!-- Card 3 (Dynamic Recent Activity) -->
+            <div class="bg-surface-container-lowest rounded-xl p-lg border border-[#E0E7E0] shadow-[0_4px_12px_rgba(45,90,39,0.05)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                <div>
+                    <div class="flex justify-between items-center mb-md relative z-10">
+                        <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Records</span>
+                        <span class="material-symbols-outlined text-secondary" data-icon="history">history</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-on-surface relative z-10">
+                        <span th:text="${recentActivity}">0</span>
+                        <span class="font-title-lg text-title-lg text-on-surface-variant">Updates</span>
+                    </div>
+                </div>
+                <div class="mt-md flex items-center text-secondary font-label-md text-label-md bg-secondary/10 w-fit px-sm py-xs rounded-full relative z-10">
+                    <span class="material-symbols-outlined text-[16px] mr-xs" data-icon="schedule">schedule</span>
+                    System Wide
+                </div>
+            </div>
+        </div>
+        <!-- Data Table Section -->
+        <div class="bg-surface-container-lowest rounded-xl border border-[#E0E7E0] shadow-[0_4px_12px_rgba(45,90,39,0.05)] overflow-hidden">
+            <div class="p-lg border-b border-[#E0E7E0] flex justify-between items-center bg-surface">
+                <h3 class="font-title-lg text-title-lg text-on-surface">Recent Crop Transactions</h3>
+                <a th:href="@{/order_m}" class="bg-primary-container text-on-primary hover:bg-primary-container/90 px-md py-sm rounded-lg font-label-md text-label-md flex items-center gap-xs transition-colors">
+                    <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                    Manage Orders
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                    <tr class="bg-[#F0F7EF] border-b border-[#E0E7E0]">
+                        <th class="py-sm px-lg font-label-md text-label-md text-on-surface-variant uppercase">Date</th>
+                        <th class="py-sm px-lg font-label-md text-label-md text-on-surface-variant uppercase">Items Summary</th>
+                        <th class="py-sm px-lg font-label-md text-label-md text-on-surface-variant uppercase text-right">Value</th>
+                        <th class="py-sm px-lg font-label-md text-label-md text-on-surface-variant uppercase">Status</th>
+                        <th class="py-sm px-lg font-label-md text-label-md text-on-surface-variant uppercase text-right">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="font-body-md text-body-md text-on-surface divide-y divide-[#E0E7E0]">
+                    <!-- Dynamic Thymeleaf Loop replacing dummy rows -->
+                    <tr th:each="transaction : ${recentTransactions}" class="hover:bg-surface-container-low transition-colors group">
+                        <td class="py-md px-lg" th:text="${#temporals.format(transaction.dateReceived, 'MMM dd, yyyy')}">Date</td>
+                        <td class="py-md px-lg font-medium truncate max-w-[250px]" th:text="${transaction.itemsSummary}">Summary</td>
+                        <td class="py-md px-lg text-right" th:text="${'$' + #numbers.formatDecimal(transaction.totalCost, 1, 'COMMA', 2, 'POINT')}">Value</td>
+                        <td class="py-md px-lg">
+                            <!-- Dynamic Badge Styling Based on Status -->
+                            <span class="inline-flex items-center px-sm py-xs rounded-full font-label-md text-label-md"
+                                  th:classappend="${transaction.status == 'Shipped' ? 'bg-primary-container/10 text-primary-container' : (transaction.status == 'Pending' ? 'bg-error-container text-error' : 'bg-secondary-container/30 text-on-surface border border-outline-variant')}"
+                                  th:text="${transaction.status}">
+                                Status
+                            </span>
+                        </td>
+                        <td class="py-md px-lg text-right">
+                            <a th:href="@{/order_m}" class="text-primary hover:text-primary-container font-label-md text-label-md px-sm py-xs border border-transparent hover:border-outline-variant rounded-md transition-all">View</a>
+                        </td>
+                    </tr>
+                    <!-- Show this if there are no transactions -->
+                    <tr th:if="${#lists.isEmpty(recentTransactions)}">
+                        <td colspan="5" class="py-lg px-lg text-center text-on-surface-variant italic">No recent transactions found.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

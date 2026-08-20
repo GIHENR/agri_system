@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Order History - AgriControl</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#154212",
+                        "primary-container": "#2d5a27",
+                        "on-primary": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "on-surface": "#1b1b1b",
+                        "on-surface-variant": "#42493e",
+                        "surface-container": "#eeeeee",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c2c9bb",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "agri-green": "#2a5934",
+                    },
+                    "spacing": {
+                        "xs": "4px", "sm": "12px", "md": "16px", "lg": "24px", "xl": "32px",
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .history-table th { border-bottom: 2px solid #e5e7eb; }
+        .history-table tr:not(:last-child) td { border-bottom: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-sans h-full flex antialiased overflow-hidden">
+
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm px-2">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+            <span class="material-symbols-outlined text-[20px]">eco</span>
+        </div>
+        <div>
+            <h1 class="text-[18px] font-bold text-primary leading-tight">AgriControl</h1>
+            <p class="text-[11px] font-semibold text-on-surface-variant">Farm Management</p>
+        </div>
+    </div>
+
+    <nav class="flex-1 flex flex-col gap-sm">
+
+        <a href="/order" class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100">
+            <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+            <span>Orders</span>
+        </a>
+
+        <a href="/order_history" class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined" data-icon="history">history</span>
+            <span>Order History</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a href="/login" class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300 mt-auto">
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- Main Content Area -->
+<div class="flex-1 ml-64 flex flex-col h-screen">
+
+    <!-- TopNavBar -->
+    <header class="bg-surface w-full z-40 border-b border-outline-variant flex justify-between items-center h-[70px] px-10 shrink-0">
+        <div class="flex items-center">
+            <h2 class="text-[20px] text-primary font-bold">Order Management</h2>
+        </div>
+        <div class="flex items-center gap-md border border-outline-variant rounded-full px-md py-xs bg-surface-container-lowest">
+            <span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+            <input class="bg-transparent border-none focus:ring-0 text-[14px] text-on-surface placeholder:text-on-surface-variant w-48 outline-none" placeholder="Search orders..." type="text"/>
+        </div>
+        <div class="flex items-center gap-md text-on-surface-variant">
+            <div class="flex flex-col text-right">
+                <!-- Dynamically pull username -->
+                <span class="text-[16px] text-on-surface font-semibold" th:text="${loggedInUser != null ? loggedInUser.username : 'John Doe'}">John Doe</span>
+                <span class="text-[12px] text-primary" th:text="${loggedInUser != null ? loggedInUser.role : 'Buyer'}">Buyer</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canvas -->
+    <main class="flex-1 overflow-y-auto p-10 bg-[#f4f7f4]">
+
+        <div class="mb-8">
+            <h2 class="text-[36px] font-bold text-gray-900 mb-2">Order History</h2>
+            <p class="text-gray-600">Review and track recent seed, fertilizer, and equipment orders.</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <table class="w-full text-left history-table">
+                <thead class="bg-[#f9fafb]">
+                <tr>
+                    <th class="py-4 px-6 text-[12px] font-bold text-gray-500 tracking-wider uppercase">Order ID</th>
+                    <th class="py-4 px-6 text-[12px] font-bold text-gray-500 tracking-wider uppercase">Date</th>
+                    <th class="py-4 px-6 text-[12px] font-bold text-gray-500 tracking-wider uppercase">Items</th>
+                    <th class="py-4 px-6 text-[12px] font-bold text-gray-500 tracking-wider uppercase">Total Cost</th>
+                    <th class="py-4 px-6 text-[12px] font-bold text-gray-500 tracking-wider uppercase">Status</th>
+                </tr>
+                </thead>
+
+                <!-- JS will inject orders right here -->
+                <tbody id="history-table-body" class="text-[14px] text-gray-800">
+                <tr>
+                    <td colspan="5" class="py-6 px-6 text-center text-gray-500">
+                        Loading your orders...
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center text-[14px] text-gray-600">
+                <span id="entries-info">Showing latest entries</span>
+                <div class="flex gap-2">
+                    <button class="px-4 py-1.5 border border-gray-300 rounded-md bg-white hover:bg-gray-50 font-medium">Previous</button>
+                    <button class="px-4 py-1.5 border border-gray-300 rounded-md bg-white hover:bg-gray-50 font-medium text-gray-900 shadow-sm">Next</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- RESTful API Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const tableBody = document.getElementById('history-table-body');
+
+        try {
+            // Hit your new API endpoint
+            const response = await fetch('/api/orders/history');
+
+            if (response.ok) {
+                const orders = await response.json();
+                tableBody.innerHTML = '';
+
+                if (orders.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="py-6 px-6 text-center text-gray-500">No orders found. Head to the Orders tab to create one!</td></tr>';
+                    return;
+                }
+
+                // Loop through the data and build rows dynamically
+                orders.forEach(order => {
+                    let statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
+                    let statusIcon = 'schedule';
+
+                    // Dynamically update colors based on the farmer's backend changes
+                    if (order.status === 'Completed') {
+                        statusColor = 'bg-green-100 text-green-700 border-green-200';
+                        statusIcon = 'check_circle';
+                    } else if (order.status === 'Shipped' || order.status === 'In Transit') {
+                        statusColor = 'bg-blue-100 text-blue-700 border-blue-200';
+                        statusIcon = 'local_shipping';
+                    } else if (order.status === 'Cancelled') {
+                        statusColor = 'bg-red-100 text-red-700 border-red-200';
+                        statusIcon = 'cancel';
+                    }
+
+                    const row = `
+                        <tr class="hover:bg-gray-50 transition-colors border-b border-gray-200">
+                            <td class="py-4 px-6 font-semibold">${order.orderId}</td>
+                            <td class="py-4 px-6 text-gray-600">${order.dateReceived}</td>
+                            <td class="py-4 px-6">${order.itemsSummary}</td>
+                            <td class="py-4 px-6 font-bold">$${order.totalCost.toFixed(2)}</td>
+                            <td class="py-4 px-6">
+                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full ${statusColor} text-[12px] font-semibold border">
+                                    <span class="material-symbols-outlined text-[14px]">${statusIcon}</span> ${order.status}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="py-6 px-6 text-center text-red-500">Failed to authenticate. Please log in again.</td></tr>';
+            }
+        } catch (error) {
+            console.error("Failed to load history", error);
+            tableBody.innerHTML = '<tr><td colspan="5" class="py-6 px-6 text-center text-red-500">Network error loading order history.</td></tr>';
+        }
+    });
+</script>
+</body>
+</html>

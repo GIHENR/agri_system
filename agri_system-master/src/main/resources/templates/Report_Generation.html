@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Report Generation - AgriControl</title>
+    <!-- Tailwind CSS with Forms plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#154212",
+                        "primary-container": "#2d5a27",
+                        "on-primary": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "on-surface": "#1b1b1b",
+                        "on-surface-variant": "#42493e",
+                        "surface-container": "#eeeeee",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c2c9bb",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "agri-green": "#2a5934",
+                    },
+                    "spacing": {
+                        "xs": "4px", "sm": "12px", "md": "16px", "lg": "24px", "xl": "32px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-table th { border-bottom: 1px solid #e5e7eb; background-color: #fafafa; }
+        .custom-table tr:not(:last-child) td { border-bottom: 1px solid #e5e7eb; }
+
+        /* Fix for date picker icon alignment */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            color: rgba(0, 0, 0, 0);
+            opacity: 1;
+            display: block;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%236b7280" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>') no-repeat right;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-animate { animation: modalFadeIn 0.2s ease-out forwards; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-[#f4f7f4] text-on-surface font-sans h-full flex antialiased overflow-hidden">
+
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm px-2">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+            <span class="material-symbols-outlined text-[20px]">eco</span>
+        </div>
+        <div>
+            <h1 class="text-[18px] font-bold text-primary leading-tight">AgriControl</h1>
+            <p class="text-[11px] font-semibold text-on-surface-variant">Admin Portal</p>
+        </div>
+    </div>
+
+    <nav class="flex-1 flex flex-col gap-sm">
+        <a th:href="@{/buyer_management}" class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100">
+            <span class="material-symbols-outlined" data-icon="group">group</span>
+            <span>Buyer Management</span>
+        </a>
+
+        <a th:href="@{/farmer_management}" class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100">
+            <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
+            <span>Farmer Management</span>
+        </a>
+
+        <!-- Report Generation -->
+        <a th:href="@{/reports}" class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+            <span>Report Generation</span>
+        </a>
+
+        <div class="mt-auto pt-4 border-t border-gray-200 w-full mb-2">
+            <a th:href="@{/logout}" class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300">
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </nav>
+</aside>
+
+<!-- Main Content Area -->
+<div class="flex-1 ml-64 flex flex-col h-screen">
+
+    <!-- TopNavBar -->
+    <header class="bg-surface w-full z-40 border-b border-outline-variant flex justify-between items-center h-[70px] px-10 shrink-0">
+        <div class="flex items-center">
+            <h2 class="text-[20px] text-primary font-bold">Admin Dashboard</h2>
+        </div>
+
+        <div class="flex items-center">
+            <div class="flex flex-col text-right">
+                <span class="text-[16px] text-on-surface font-semibold" th:text="${loggedInUser?.username}">Jane Admin</span>
+                <span class="text-[12px] text-primary" th:text="${loggedInUser?.role}">System Administrator</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dynamic Canvas -->
+    <main class="flex-1 overflow-y-auto p-10">
+
+        <!-- Global Controls  -->
+        <div class="max-w-[1200px] mx-auto mb-6 flex justify-between items-center">
+            <!-- Toggle -->
+            <div class="bg-gray-200 p-1 rounded-lg inline-flex items-center shadow-inner">
+                <button id="tab-buyer" class="px-6 py-2 bg-white text-gray-900 text-[14px] font-bold rounded-md shadow-sm transition-all duration-200">Buyer Reports</button>
+                <button id="tab-farmer" class="px-6 py-2 text-gray-600 hover:text-gray-900 text-[14px] font-medium rounded-md transition-all duration-200">Farmer Reports</button>
+            </div>
+
+            <!-- Generate New Report Button -->
+            <button id="btn-open-modal" class="px-5 py-2.5 bg-[#154212] text-white text-[14px] font-semibold rounded-md hover:bg-[#1a3b1e] transition-colors shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                Generate New Report
+            </button>
+        </div>
+
+
+        <div id="view-buyer" class="fade-in block">
+            <div class="max-w-[1200px] mx-auto mb-6">
+                <h2 class="text-[32px] font-bold text-gray-900 tracking-tight">Generated Buyer Reports</h2>
+                <p class="text-[15px] text-gray-600 mt-1">Access and download previously generated reports regarding buyer activities and sales.</p>
+            </div>
+
+            <!-- Report Card -->
+            <div class="max-w-[1200px] mx-auto bg-white border border-gray-200 rounded-xl shadow-sm">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left custom-table">
+                        <thead>
+                        <tr>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Report ID</th>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Report Type</th>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Date Generated</th>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Format</th>
+                        </tr>
+                        </thead>
+                        <tbody class="text-[14px] text-gray-800 bg-white">
+
+                        <!-- Dynamic Loop for Buyer Reports -->
+                        <tr th:each="report : ${recentReports}" th:if="${report.reportType == 'BUYER PDF REPORT'}" class="hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-6 font-semibold text-gray-900" th:text="'#REP-' + ${report.id}">#REP-1</td>
+                            <td class="py-4 px-6 text-gray-600">Verified Buyers List</td>
+                            <td class="py-4 px-6 text-gray-600" th:text="${#temporals.format(report.generatedAt, 'MMM dd, yyyy, hh:mm a')}">Oct 24, 2023, 10:45 AM</td>
+                            <td class="py-4 px-6">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-100 text-red-800 text-[11px] font-bold border border-red-200">
+                                    <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span> PDF
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(recentReports)}">
+                            <td colspan="4" class="py-8 text-center text-gray-500 font-medium">No reports generated yet.</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="view-farmer" class="fade-in hidden">
+            <div class="max-w-[1200px] mx-auto mb-6">
+                <h2 class="text-[32px] font-bold text-gray-900 tracking-tight">Generated Farmer Reports</h2>
+                <p class="text-[15px] text-gray-600 mt-1">Access and download previously generated reports regarding farmer yields and operations.</p>
+            </div>
+
+            <!-- Report Card -->
+            <div class="max-w-[1200px] mx-auto bg-white border border-gray-200 rounded-xl shadow-sm">
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left custom-table">
+                        <thead>
+                        <tr>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Report ID</th>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Report Type</th>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Date Generated</th>
+                            <th class="py-3 px-6 text-[11px] font-bold text-gray-600 tracking-wide uppercase">Format</th>
+                        </tr>
+                        </thead>
+                        <tbody class="text-[14px] text-gray-800 bg-white">
+
+                        <!-- Dynamic Loop for Farmer Reports -->
+                        <tr th:each="report : ${recentReports}" th:if="${report.reportType == 'FARMER PDF REPORT'}" class="hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-6 font-semibold text-gray-900" th:text="'#REP-' + ${report.id}">#REP-2</td>
+                            <td class="py-4 px-6 text-gray-600">Verified Farmers List</td>
+                            <td class="py-4 px-6 text-gray-600" th:text="${#temporals.format(report.generatedAt, 'MMM dd, yyyy, hh:mm a')}">Oct 12, 2023, 11:00 AM</td>
+                            <td class="py-4 px-6">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-100 text-red-800 text-[11px] font-bold border border-red-200">
+                                    <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span> PDF
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(recentReports)}">
+                            <td colspan="4" class="py-8 text-center text-gray-500 font-medium">No reports generated yet.</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!--Generate New Report -->
+<div id="modal-generate-report" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[100] hidden items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col modal-animate">
+
+        <div class="px-8 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <h3 class="text-[20px] font-bold text-gray-900 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">description</span>
+                Generate New Report
+            </h3>
+            <button id="btn-close-modal" class="text-gray-400 hover:text-gray-800 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form id="reportForm" class="p-8 flex flex-col gap-5">
+
+            <div class="flex flex-col gap-2">
+                <label class="text-[13px] font-bold text-gray-700">Report Category</label>
+                <div class="relative">
+                    <select id="report-category" required class="w-full appearance-none bg-none border border-gray-300 rounded-md py-2.5 px-4 text-gray-700 text-[14px] focus:outline-none focus:ring-1 focus:ring-agri-green focus:border-agri-green bg-white">
+                        <option value="" disabled selected>Select a category...</option>
+                        <option value="buyer">Verified Buyers Database</option>
+                        <option value="farmer">Verified Farmers Database</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 mt-2">
+                <label class="text-[13px] font-bold text-gray-700">Export Format</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="format" value="pdf" checked class="text-agri-green focus:ring-agri-green h-4 w-4">
+                        <span class="text-[14px] text-gray-700 flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-red-600">picture_as_pdf</span> PDF Document (System Enforced)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-end gap-3 pt-5 border-t border-gray-100">
+                <button type="button" id="btn-cancel-modal" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 text-[14px] font-semibold rounded-md hover:bg-gray-50 transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 bg-agri-green text-white text-[14px] font-semibold rounded-md hover:bg-primary-container transition-colors shadow-sm flex items-center gap-2">
+                    Generate & Download
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script to Handle Tabs and Modal -->
+<script>
+    // Tab switching logic
+    const btnBuyer = document.getElementById('tab-buyer');
+    const btnFarmer = document.getElementById('tab-farmer');
+
+    const viewBuyer = document.getElementById('view-buyer');
+    const viewFarmer = document.getElementById('view-farmer');
+
+    const activeClass = ['bg-white', 'text-gray-900', 'font-bold', 'shadow-sm'];
+    const inactiveClass = ['text-gray-600', 'hover:text-gray-900', 'font-medium', 'bg-transparent', 'shadow-none'];
+
+    function setTabActive(activeBtn, inactiveBtn, activeView, inactiveView) {
+        activeBtn.classList.remove(...inactiveClass);
+        activeBtn.classList.add(...activeClass);
+
+        inactiveBtn.classList.remove(...activeClass);
+        inactiveBtn.classList.add(...inactiveClass);
+
+        inactiveView.classList.add('hidden');
+        inactiveView.classList.remove('block');
+
+        activeView.classList.remove('hidden');
+        activeView.classList.remove('fade-in');
+        void activeView.offsetWidth; // trigger reflow for animation
+        activeView.classList.add('fade-in');
+        activeView.classList.add('block');
+    }
+
+    btnBuyer.addEventListener('click', () => setTabActive(btnBuyer, btnFarmer, viewBuyer, viewFarmer));
+    btnFarmer.addEventListener('click', () => setTabActive(btnFarmer, btnBuyer, viewFarmer, viewBuyer));
+
+    // Modal Logic
+    const reportModal = document.getElementById('modal-generate-report');
+    const btnOpenModal = document.getElementById('btn-open-modal');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnCancelModal = document.getElementById('btn-cancel-modal');
+    const reportForm = document.getElementById('reportForm');
+
+    function openModal() {
+        reportModal.classList.remove('hidden');
+        reportModal.classList.add('flex');
+    }
+
+    function closeModal() {
+        reportModal.classList.add('hidden');
+        reportModal.classList.remove('flex');
+        reportForm.reset();
+    }
+
+    btnOpenModal.addEventListener('click', openModal);
+    btnCloseModal.addEventListener('click', closeModal);
+    btnCancelModal.addEventListener('click', closeModal);
+
+    // Close on clicking outside the modal content
+    window.addEventListener('click', (e) => {
+        if (e.target === reportModal) closeModal();
+    });
+
+    // Handle form submission and REST API call
+    reportForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const category = document.getElementById('report-category').value;
+        if(category) {
+            // Trigger the download via the REST endpoint
+            window.location.href = `/api/reports/download/${category}`;
+
+            // Reload the page slightly after to update the history table
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+
+            closeModal();
+        }
+    });
+</script>
+</body>
+</html>

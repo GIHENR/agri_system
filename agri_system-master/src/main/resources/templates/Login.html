@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AgriControl - Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#bec5bd",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed": "#dde4dd",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-container": "#dfe0e0",
+                        "surface": "#f9f9f9",
+                        "on-primary-fixed": "#002201",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#343b36",
+                        "on-background": "#1b1b1b",
+                        "secondary": "#5d5f5f",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#c1c8c1",
+                        "primary": "#154212",
+                        "primary-fixed": "#bcf0ae",
+                        "on-tertiary-fixed-variant": "#414843",
+                        "surface-tint": "#3b6934",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "secondary-fixed": "#e2e2e2",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "inverse-primary": "#a1d494",
+                        "on-secondary-fixed-variant": "#454747",
+                        "outline": "#72796e",
+                        "on-tertiary-fixed": "#161d19",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#2d5a27",
+                        "primary-fixed-dim": "#a1d494",
+                        "outline-variant": "#c2c9bb",
+                        "background": "#f9f9f9",
+                        "on-surface-variant": "#42493e",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-surface": "#1b1b1b",
+                        "tertiary-container": "#4b524c",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-surface": "#303030",
+                        "on-secondary-container": "#616363",
+                        "surface-dim": "#dadada",
+                        "on-primary-container": "#9dd090",
+                        "surface-container-low": "#f3f3f3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "base": "8px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(to bottom right, #f9f9f9, #dde4dd); }
+        .modal-overlay { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md text-on-surface antialiased relative">
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop">
+    <div class="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-[0_4px_12px_rgba(45,90,39,0.05)] relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-primary-container"></div>
+        <div class="flex flex-col items-center mb-xl mt-sm text-center">
+            <div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md border border-outline-variant">
+                <span class="material-symbols-outlined text-primary-container" style="font-size: 28px; font-variation-settings: 'FILL' 1;">eco</span>
+            </div>
+            <h1 class="font-headline-md text-headline-md text-on-surface mb-xs">AgriControl</h1>
+            <p class="font-body-md text-body-md text-secondary">Sign in to your management dashboard</p>
+        </div>
+
+        <!-- Status Messages -->
+
+        <!-- Account Verification Success -->
+        <div th:if="${param.success != null and param.success[0] == 'true'}" class="mb-4 p-3 bg-primary-fixed text-on-primary-fixed-variant rounded-md text-center text-sm font-medium">
+            Account verified successfully! You can now log in.
+        </div>
+
+        <!-- Password Update Success -->
+        <div th:if="${param.success != null and param.success[0] == 'password_updated'}" class="mb-4 p-3 bg-primary-fixed text-on-primary-fixed-variant rounded-md text-center text-sm font-medium">
+            Password updated successfully! You can now log in.
+        </div>
+
+        <!-- General Errors -->
+        <div th:if="${param.error}" class="mb-4 p-3 bg-error-container text-on-error-container rounded-md text-center text-sm font-medium">
+            <span th:if="${param.error[0] == 'email_not_found'}">Email not found in our system.</span>
+            <span th:if="${param.error[0] == 'invalid_reset_code'}">Invalid or expired reset code. Please try again.</span>
+            <span th:if="${param.error[0] == 'invalid_credentials'}">Invalid username or password.</span>
+            <span th:if="${param.error[0] == 'not_verified'}">Please verify your email before logging in.</span>
+            <span th:if="${param.error[0] == 'invalid_code'}">Invalid verification code.</span>
+        </div>
+
+        <!-- Logout Success Message -->
+        <div th:if="${param.logout}" class="mb-4 p-3 bg-primary-fixed text-on-primary-fixed-variant rounded-md text-center text-sm font-medium">
+            You have been successfully logged out.
+        </div>
+        <!-- Main Login Form -->
+        <form th:action="@{/login}" class="space-y-md" method="POST">
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-md text-label-md text-on-surface" for="username">Email or Username</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-sm font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-on-surface focus:ring-1 focus:ring-on-surface outline-none" id="username" name="username" placeholder="e.g. manager@farm.com" required type="text"/>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-sm py-sm font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-on-surface focus:ring-1 focus:ring-on-surface outline-none" id="password" name="password" placeholder="••••••••" required type="password"/>
+            </div>
+            <div class="pt-sm">
+                <button class="w-full bg-primary-container text-on-primary rounded-lg py-sm font-label-md text-label-md flex justify-center items-center hover:bg-primary transition-colors cursor-pointer active:scale-95 shadow-sm" type="submit">Login</button>
+            </div>
+        </form>
+
+        <div class="mt-lg flex flex-col md:flex-row justify-between items-center gap-sm pt-md border-t border-surface-variant">
+            <button type="button" onclick="openModal('forgotPasswordModal')" class="font-label-md text-label-md text-secondary hover:text-primary-container transition-colors cursor-pointer bg-transparent border-none p-0 outline-none">Forgot Password?</button>
+            <button type="button" onclick="openModal('registerModal')" class="font-label-md text-label-md text-secondary hover:text-primary-container transition-colors cursor-pointer bg-transparent border-none p-0 outline-none">Request Access</button>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-transparent border-t border-outline-variant flex flex-col md:flex-row justify-center items-center gap-lg w-full py-xl px-margin-mobile md:px-margin-desktop mt-auto">
+    <span class="font-label-md text-label-md text-secondary">© 2026 AgriControl Systems. All rights reserved.</span>
+</footer>
+
+<!--Registration Modal -->
+<div id="registerModal" class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-50 backdrop-blur-sm modal-overlay">
+    <div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] w-full max-w-md border border-outline-variant mx-4 relative">
+        <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-secondary hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        <div class="flex flex-col items-center mb-md text-center">
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Create Account</h2>
+            <p class="font-body-md text-body-md text-secondary">Join AgriControl platform</p>
+        </div>
+        <!-- Updated to use Thymeleaf action and POST real data -->
+        <form th:action="@{/register}" method="POST" class="space-y-md">
+            <input type="text" name="username" placeholder="Username" class="w-full border border-outline-variant rounded-md px-sm py-sm outline-none" required>
+            <input type="email" name="email" placeholder="Email" class="w-full border border-outline-variant rounded-md px-sm py-sm outline-none" required>
+
+            <!-- Role Selection Dropdown -->
+            <select name="role" class="w-full border border-outline-variant rounded-md px-sm py-sm outline-none text-on-surface bg-surface-container-lowest focus:border-on-surface focus:ring-1 focus:ring-on-surface" required>
+                <option value="" disabled selected>Who are you?</option>
+                <option value="FARMER">Farmer</option>
+                <option value="BUYER">Buyer</option>
+            </select>
+
+            <input type="password" name="password" placeholder="Password" class="w-full border border-outline-variant rounded-md px-sm py-sm outline-none" required>
+            <button type="submit" class="w-full bg-primary-container text-on-primary rounded-lg py-sm hover:bg-primary transition-colors">Register Account</button>
+        </form>
+    </div>
+</div>
+
+<!--  Verify Account  Modal -->
+<div id="verifyAccountModal" class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-50 backdrop-blur-sm modal-overlay">
+    <div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] w-full max-w-md border border-outline-variant mx-4 relative">
+        <button onclick="closeModal('verifyAccountModal')" class="absolute top-4 right-4 text-secondary hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        <div class="flex flex-col items-center mb-md text-center">
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Verify Your Email</h2>
+            <p class="font-body-md text-body-md text-secondary">We sent a 6-digit code to your email.</p>
+        </div>
+        <!-- Updated to point to our Spring Boot endpoint -->
+        <form th:action="@{/verify-email}" method="POST" class="space-y-md">
+            <input type="text" name="code" placeholder="Enter 6-digit code" class="w-full text-center tracking-[0.5em] font-bold border border-outline-variant rounded-md px-sm py-sm outline-none" required maxlength="6">
+            <button type="submit" class="w-full bg-primary-container text-on-primary rounded-lg py-sm hover:bg-primary transition-colors">Verify Account</button>
+        </form>
+    </div>
+</div>
+
+<!-- 3. Forgot Password (Request Code) Modal -->
+<div id="forgotPasswordModal" class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-50 backdrop-blur-sm modal-overlay">
+    <div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] w-full max-w-md border border-outline-variant mx-4 relative">
+        <button onclick="closeModal('forgotPasswordModal')" class="absolute top-4 right-4 text-secondary hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        <div class="flex flex-col items-center mb-md text-center">
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Reset Password</h2>
+            <p class="font-body-md text-body-md text-secondary">Enter your email to receive a reset code.</p>
+        </div>
+        <form th:action="@{/request-reset}" method="POST" class="space-y-md">
+            <input type="email" name="email" placeholder="manager@farm.com" class="w-full border border-outline-variant rounded-md px-sm py-sm outline-none" required>
+            <button type="submit" class="w-full bg-primary-container text-on-primary rounded-lg py-sm hover:bg-primary transition-colors">Send Reset Code</button>
+        </form>
+    </div>
+</div>
+
+<!-- 4. Reset Password (Enter Code & New Password) Modal -->
+<div id="resetPasswordModal" class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-50 backdrop-blur-sm modal-overlay">
+    <div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] w-full max-w-md border border-outline-variant mx-4 relative">
+        <button onclick="closeModal('resetPasswordModal')" class="absolute top-4 right-4 text-secondary hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        <div class="flex flex-col items-center mb-md text-center">
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-xs">Create New Password</h2>
+            <p class="font-body-md text-body-md text-secondary">Enter the code from your email and your new password.</p>
+        </div>
+        <form th:action="@{/reset-password}" method="POST" class="space-y-md">
+            <input type="text" name="resetCode" placeholder="Enter reset code" class="w-full text-center tracking-[0.5em] font-bold border border-outline-variant rounded-md px-sm py-sm outline-none" required maxlength="6">
+            <input type="password" name="newPassword" placeholder="New Password" class="w-full border border-outline-variant rounded-md px-sm py-sm outline-none" required>
+            <button type="submit" class="w-full bg-primary-container text-on-primary rounded-lg py-sm hover:bg-primary transition-colors">Update Password</button>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for Modal Control -->
+<script>
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function switchModal(closeId, openId) {
+        closeModal(closeId);
+        openModal(openId);
+    }
+
+    // This automatically checks the URL when the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Auto-open verify modal if redirected from registration
+        if (urlParams.has('verify')) {
+            openModal('verifyAccountModal');
+        }
+
+        // Auto-open reset modal if redirected from requesting a reset code
+        if (urlParams.has('reset')) {
+            openModal('resetPasswordModal');
+        }
+    });
+</script>
+
+</body>
+</html>

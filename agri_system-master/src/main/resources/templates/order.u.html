@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Create Order - AgriControl</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#154212",
+                        "primary-container": "#2d5a27",
+                        "on-primary": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "on-surface": "#1b1b1b",
+                        "on-surface-variant": "#42493e",
+                        "surface-container": "#eeeeee",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c2c9bb",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "agri-green": "#2a5934",
+                    },
+                    "spacing": {
+                        "xs": "4px", "sm": "12px", "md": "16px", "lg": "24px", "xl": "32px",
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-sans h-full flex antialiased overflow-hidden">
+
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm px-2">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+            <span class="material-symbols-outlined text-[20px]">eco</span>
+        </div>
+        <div>
+            <h1 class="text-[18px] font-bold text-primary leading-tight">AgriControl</h1>
+            <p class="text-[11px] font-semibold text-on-surface-variant">Farm Management</p>
+        </div>
+    </div>
+
+    <nav class="flex-1 flex flex-col gap-sm">
+
+        <a href="/order" class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+            <span>Orders</span>
+        </a>
+
+        <a href="/order_history" class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100">
+            <span class="material-symbols-outlined" data-icon="history">history</span>
+            <span>Order History</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a href="/login" class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300 mt-auto">
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- Main Content Area -->
+<div class="flex-1 ml-64 flex flex-col h-screen">
+
+    <!-- TopNavBar  -->
+    <header class="bg-surface w-full z-40 border-b border-outline-variant flex justify-between items-center h-[70px] px-10 shrink-0">
+        <div class="flex items-center">
+            <h2 class="text-[20px] text-primary font-bold">Order Management</h2>
+        </div>
+        <div class="flex items-center gap-md border border-outline-variant rounded-full px-md py-xs bg-surface-container-lowest">
+            <span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+            <input class="bg-transparent border-none focus:ring-0 text-[14px] text-on-surface placeholder:text-on-surface-variant w-48 outline-none" placeholder="Search orders..." type="text"/>
+        </div>
+        <div class="flex items-center gap-md text-on-surface-variant">
+            <div class="flex flex-col text-right">
+                <span class="text-[16px] text-on-surface font-semibold" th:text="${loggedInUser != null ? loggedInUser.username : 'John Doe'}">John Doe</span>
+                <span class="text-[12px] text-primary" th:text="${loggedInUser != null ? loggedInUser.role : 'Buyer'}">Buyer</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canvas -->
+    <main class="flex-1 overflow-y-auto p-10 bg-[#f4f7f4]">
+
+        <div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl shadow-sm p-8">
+            <h2 class="text-[32px] font-bold text-gray-900 mb-8">Create New Order</h2>
+
+            <!-- Form Inputs -->
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="flex flex-col gap-2">
+                    <label class="text-[13px] font-bold text-gray-700">Select Crop</label>
+                    <div class="relative">
+                        <select id="crop-select" class="w-full appearance-none border border-gray-300 rounded-md py-3 px-4 text-gray-700 focus:outline-none focus:ring-1 focus:ring-agri-green focus:border-agri-green">
+                            <option th:each="crop : ${availableCrops}"
+                                    th:value="${crop.cropName}"
+                                    th:data-price="${crop.pricePerUnit}"
+                                    th:data-stock="${crop.stockLevel}"
+                                    th:text="${crop.cropName} + ' ($' + ${crop.pricePerUnit} + '/unit) - ' + ${crop.stockLevel} + ' in stock'">
+                            </option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-3 text-gray-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-[13px] font-bold text-gray-700">Quantity (Bushels)</label>
+                    <input id="quantity-input" type="number" min="1" value="500" class="w-full border border-gray-300 rounded-md py-3 px-4 text-gray-700 focus:outline-none focus:ring-1 focus:ring-agri-green focus:border-agri-green">
+                </div>
+            </div>
+
+            <!-- Summary Box -->
+            <div class="bg-gray-50 border border-gray-100 rounded-lg p-6 mb-8">
+                <div class="flex justify-between items-center text-[13px] font-bold text-gray-500 uppercase tracking-wide border-b border-gray-200 pb-3 mb-4">
+                    <span>Item</span>
+                    <span>Price (Est.)</span>
+                </div>
+
+                <div class="flex justify-between items-center text-gray-800 mb-4">
+                    <span id="summary-item-name">Winter Wheat (500 bu)</span>
+                    <span id="summary-item-price" class="font-medium">$3,250.00</span>
+                </div>
+                <div class="flex justify-between items-center text-gray-800 border-b border-gray-200 pb-4 mb-4">
+                    <span>Processing Fee</span>
+                    <span class="font-medium">$45.00</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-[20px] font-bold text-gray-900">Total Price</span>
+                    <span id="summary-total-price" class="text-[20px] font-bold text-agri-green">$3,295.00</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
+                <button class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 text-[14px] font-semibold rounded-md hover:bg-gray-50 transition-colors">Cancel</button>
+                <button id="btn-submit-order" class="px-6 py-2.5 bg-agri-green text-white text-[14px] font-semibold rounded-md hover:bg-primary-container transition-colors shadow-sm">Submit Order</button>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- CONFIRM ORDER -->
+<div id="modal-confirm" class="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[100] hidden items-center justify-center transition-opacity">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden p-8">
+        <h3 class="text-center text-[28px] font-bold text-gray-900 mb-6">Confirm Your Order</h3>
+
+        <div class="bg-[#f5f5f5] rounded-lg p-5 mb-6">
+            <h4 class="text-[16px] font-bold text-gray-900 mb-4">Order Summary</h4>
+
+            <div class="flex justify-between items-center text-[14px] text-gray-700 mb-3 border-b border-gray-200 pb-3">
+                <span id="modal-item-name">Winter Wheat (500 bu)</span>
+                <span id="modal-item-price" class="font-semibold">$3,250.00</span>
+            </div>
+
+            <div class="flex justify-between items-center text-[14px] text-gray-700 mb-4 border-b border-gray-200 pb-4">
+                <span>Processing Fee</span>
+                <span class="font-semibold">$45.00</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <span class="text-[20px] font-bold text-gray-900">Total</span>
+                <span id="modal-total-price" class="text-[20px] font-bold text-agri-green">$3,295.00</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-gray-600 text-[13px] mb-6 px-1">
+            <span class="material-symbols-outlined text-[16px]">info</span>
+            <span>Please review your items carefully before confirming.</span>
+        </div>
+
+        <div class="flex gap-3">
+            <button id="btn-go-back" class="flex-1 py-2.5 bg-white border border-gray-300 text-gray-800 text-[13px] font-bold rounded-md hover:bg-gray-50 transition-colors">Go Back</button>
+            <button id="btn-confirm-submit" class="flex-1 py-2.5 bg-[#26532b] text-white text-[13px] font-bold rounded-md hover:bg-[#1a3b1e] transition-colors">Confirm and Submit</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Pricing and Modal Logic -->
+<script>
+    const PROCESSING_FEE = 45.00;
+
+    const cropSelect = document.getElementById('crop-select');
+    const quantityInput = document.getElementById('quantity-input');
+
+    const summaryItemName = document.getElementById('summary-item-name');
+    const summaryItemPrice = document.getElementById('summary-item-price');
+    const summaryTotalPrice = document.getElementById('summary-total-price');
+
+    const modalItemName = document.getElementById('modal-item-name');
+    const modalItemPrice = document.getElementById('modal-item-price');
+    const modalTotalPrice = document.getElementById('modal-total-price');
+
+    const modalConfirm = document.getElementById('modal-confirm');
+    const btnSubmitOrder = document.getElementById('btn-submit-order');
+    const btnGoBack = document.getElementById('btn-go-back');
+    const btnConfirmSubmit = document.getElementById('btn-confirm-submit');
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    };
+
+    const updatePricing = () => {
+        const selectedOption = cropSelect.options[cropSelect.selectedIndex];
+        const cropName = selectedOption.text.split(' (')[0];
+        const unitPrice = parseFloat(selectedOption.getAttribute('data-price'));
+        const quantity = parseInt(quantityInput.value) || 0;
+
+        const itemTotal = unitPrice * quantity;
+        const finalTotal = itemTotal + PROCESSING_FEE;
+
+        const itemText = `${cropName} (${quantity} bu)`;
+        const itemPriceFormatted = formatCurrency(itemTotal);
+        const finalTotalFormatted = formatCurrency(finalTotal);
+
+        summaryItemName.textContent = itemText;
+        summaryItemPrice.textContent = itemPriceFormatted;
+        summaryTotalPrice.textContent = finalTotalFormatted;
+
+        modalItemName.textContent = itemText;
+        modalItemPrice.textContent = itemPriceFormatted;
+        modalTotalPrice.textContent = finalTotalFormatted;
+    };
+
+    cropSelect.addEventListener('change', updatePricing);
+    quantityInput.addEventListener('input', updatePricing);
+
+
+    btnSubmitOrder.addEventListener('click', () => {
+        modalConfirm.classList.remove('hidden');
+        modalConfirm.classList.add('flex');
+    });
+
+
+    btnGoBack.addEventListener('click', () => {
+        modalConfirm.classList.add('hidden');
+        modalConfirm.classList.remove('flex');
+    });
+
+
+    btnConfirmSubmit.addEventListener('click', async () => {
+        modalConfirm.classList.add('hidden');
+        modalConfirm.classList.remove('flex');
+
+        const selectedOption = cropSelect.options[cropSelect.selectedIndex];
+        const cropName = selectedOption.text.split(' (')[0];
+
+        // Convert to integer so Java accepts it perfectly
+        const quantity = parseInt(quantityInput.value);
+        const totalCost = parseFloat(summaryTotalPrice.textContent.replace('$', '').replace(/,/g, ''));
+
+        // Final strict check against stock limit just in case
+        const maxStock = parseInt(selectedOption.getAttribute('data-stock'));
+        if (quantity > maxStock) {
+            alert(`Order failed: You requested ${quantity}, but only ${maxStock} are in stock.`);
+            return;
+        }
+
+        // Payload for Java backend
+        const payload = {
+            cropName: cropName,
+            quantity: quantity,
+            totalCost: totalCost
+        };
+
+        try {
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert('Order Placed! Farmer notified.');
+                window.location.href = '/order_history';
+            } else {
+                alert('Failed to place order.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Network error.');
+        }
+    });
+
+    // Initialize pricing on page load
+    updatePricing();
+</script>
+</body>
+</html>

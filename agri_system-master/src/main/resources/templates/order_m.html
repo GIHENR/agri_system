@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="light" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Manage Received Orders - AgriManage</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#161d19",
+                        "secondary-container": "#dfe0e0",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c2c9bb",
+                        "primary-container": "#2d5a27",
+                        "on-primary": "#ffffff",
+                        "primary": "#154212",
+                        "on-secondary-fixed-variant": "#454747",
+                        "primary-fixed": "#bcf0ae",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#bec5bd",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "surface-container-low": "#f3f3f3",
+                        "tertiary-fixed-dim": "#c1c8c1",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#3b6934",
+                        "on-secondary-container": "#616363",
+                        "tertiary-fixed": "#dde4dd",
+                        "inverse-surface": "#303030",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "background": "#f9f9f9",
+                        "outline": "#72796e",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary-fixed": "#002201",
+                        "surface-variant": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "on-background": "#1b1b1b",
+                        "secondary": "#5d5f5f",
+                        "inverse-on-surface": "#f1f1f1",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-surface": "#1b1b1b",
+                        "surface-container": "#eeeeee",
+                        "tertiary": "#343b36",
+                        "on-tertiary-fixed-variant": "#414843",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#4b524c",
+                        "inverse-primary": "#a1d494",
+                        "on-primary-container": "#9dd090",
+                        "primary-fixed-dim": "#a1d494",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-surface-variant": "#42493e",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "margin-desktop": "40px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-lg min-h-screen flex">
+
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold">
+            AM
+        </div>
+        <div>
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">AgriManage</h1>
+            <p class="font-label-md text-label-md text-on-surface-variant">Farm Operations</p>
+        </div>
+    </div>
+    <nav class="flex-1 flex flex-col gap-sm">
+        <!-- Dashboard -->
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100" th:href="@{/}">
+            <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100" th:href="@{/crop_inventory}">
+            <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+            <span>Crop Inventory</span>
+        </a>
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors" th:href="@{/order_m}">
+            <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+            <span>Orders</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300 mt-auto" th:href="@{/logout}">
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- Main Content Wrapper -->
+<div class="flex-grow ml-64 flex flex-col min-h-screen">
+
+    <!-- TopNavBar -->
+    <header class="bg-surface fixed top-0 right-0 w-[calc(100%-16rem)] z-40 border-b border-outline-variant flex justify-between items-center h-16 px-margin-desktop">
+        <div class="flex items-center">
+            <h2 class="font-title-lg text-title-lg text-primary font-bold">AgriManage Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-md border border-outline-variant rounded-full px-md py-xs bg-surface-container-lowest">
+            <span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+            <input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant w-48" placeholder="Search orders..." type="text"/>
+        </div>
+        <!-- Display Dynamic User Name and Role -->
+        <div class="flex flex-col text-right">
+        <span class="font-title-lg text-title-lg text-on-surface text-[16px]"
+              th:text="${loggedInUser?.username}">John Doe</span>
+
+            <span class="font-label-md text-label-md text-primary"
+                  th:text="${loggedInUser?.role}">Farmer</span>
+        </div>
+    </header>
+
+    <!-- Canvas -->
+    <main class="flex-grow pt-24 px-margin-desktop pb-xl bg-surface-container-low">
+        <div class="mb-xl">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Received Orders</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Manage and track inbound agricultural supply requests.</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm overflow-hidden">
+
+            <!-- Filters & Search Toolbar -->
+            <div class="p-lg border-b border-outline-variant flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+                <div class="flex flex-wrap gap-xs">
+                    <button class="px-md py-xs rounded-full bg-primary-container text-on-primary font-label-md text-label-md">All</button>
+                    <button class="px-md py-xs rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">Pending</button>
+                    <button class="px-md py-xs rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">In Progress</button>
+                    <button class="px-md py-xs rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">Shipped</button>
+                    <button class="px-md py-xs rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">Cancelled</button>
+                </div>
+                <div class="relative w-full md:w-auto">
+                    <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                    <input class="w-full md:w-64 pl-xl pr-sm py-sm border border-outline-variant rounded-lg bg-surface focus:outline-none focus:ring-1 focus:ring-primary font-body-md text-body-md" placeholder="Search orders..." type="text"/>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                    <tr class="bg-surface border-b border-outline-variant">
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold">Order ID</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold">Customer / Farm</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold">Date Received</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold">Items Summary</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold">Total Cost</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold">Status</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-sm px-md font-semibold text-right">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="font-body-md text-body-md">
+
+                    <!-- Dynamic Thymeleaf Loop for Orders -->
+                    <tr th:each="order : ${orders}" class="border-b border-surface-variant hover:bg-surface-container-low transition-colors">
+
+                        <!-- Order ID -->
+                        <td class="py-sm px-md font-medium"
+                            th:classappend="${order.status == 'Cancelled' ? 'text-on-surface-variant' : 'text-on-surface'}"
+                            th:text="${order.orderId}">#ORD-0000</td>
+
+                        <!-- Customer -->
+                        <td class="py-sm px-md"
+                            th:classappend="${order.status == 'Cancelled' ? 'text-on-surface-variant' : ''}"
+                            th:text="${order.customerName}">Customer Name</td>
+
+                        <!-- Date -->
+                        <td class="py-sm px-md text-on-surface-variant"
+                            th:text="${#temporals.format(order.dateReceived, 'MMM dd, yyyy')}">Jan 01, 2026</td>
+
+                        <!-- Items Summary -->
+                        <td class="py-sm px-md text-on-surface-variant truncate max-w-[200px]"
+                            th:classappend="${order.status == 'Cancelled' ? 'line-through' : ''}"
+                            th:text="${order.itemsSummary}">Item list...</td>
+
+                        <!-- Total Cost -->
+                        <td class="py-sm px-md font-medium"
+                            th:classappend="${order.status == 'Cancelled' ? 'text-on-surface-variant' : ''}"
+                            th:text="${'$' + #numbers.formatDecimal(order.totalCost, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
+
+                        <!-- Status Badge -->
+                        <td class="py-sm px-md">
+                            <th:block th:switch="${order.status}">
+                                <!-- Pending -->
+                                <span th:case="'Pending'" class="inline-flex items-center px-sm py-xs rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md">
+                        <span class="w-2 h-2 rounded-full bg-outline-variant mr-xs"></span>Pending
+                    </span>
+                                <!-- In Progress -->
+                                <span th:case="'In Progress'" class="inline-flex items-center px-sm py-xs rounded-full bg-primary-container/20 text-primary-fixed-variant font-label-md text-label-md">
+                        <span class="w-2 h-2 rounded-full bg-primary-container mr-xs"></span>In Progress
+                    </span>
+                                <!-- Shipped -->
+                                <span th:case="'Shipped'" class="inline-flex items-center px-sm py-xs rounded-full bg-primary text-on-primary font-label-md text-label-md">
+                        <span class="w-2 h-2 rounded-full bg-on-primary mr-xs"></span>Shipped
+                    </span>
+                                <!-- Cancelled -->
+                                <span th:case="'Cancelled'" class="inline-flex items-center px-sm py-xs rounded-full bg-error-container text-on-error-container font-label-md text-label-md">
+                        Cancelled
+                    </span>
+                                <!-- Fallback -->
+                                <span th:case="*" th:text="${order.status}" class="inline-flex items-center px-sm py-xs rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md">
+                        Unknown
+                    </span>
+                            </th:block>
+                        </td>
+
+                        <!-- Actions (Dropdown Menu) -->
+                        <td class="py-sm px-md text-right relative action-cell">
+                            <button onclick="toggleDropdown(event)" class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container focus:outline-none">
+                                <span class="material-symbols-outlined pointer-events-none">more_vert</span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div class="dropdown-menu hidden absolute right-8 top-10 w-48 bg-surface-container-lowest rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-outline-variant z-50 text-left overflow-hidden">
+
+                                <!-- Status Update Form -->
+                                <form th:action="@{/order/update-status}" method="POST">
+                                    <input type="hidden" name="id" th:value="${order.id}"/>
+                                    <button type="submit" name="status" value="Pending" class="w-full text-left px-4 py-2 text-sm hover:bg-surface-container-low text-on-surface transition-colors">Mark Pending</button>
+                                    <button type="submit" name="status" value="In Progress" class="w-full text-left px-4 py-2 text-sm hover:bg-surface-container-low text-on-surface transition-colors">Mark In Progress</button>
+                                    <button type="submit" name="status" value="Shipped" class="w-full text-left px-4 py-2 text-sm hover:bg-surface-container-low text-on-surface transition-colors">Mark Shipped</button>
+                                    <button type="submit" name="status" value="Cancelled" class="w-full text-left px-4 py-2 text-sm hover:bg-surface-container-low text-on-surface transition-colors">Cancel Order</button>
+                                </form>
+
+                                <div class="border-t border-outline-variant"></div>
+
+                                <!-- Delete Form -->
+                                <form th:action="@{/order/delete}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                    <input type="hidden" name="id" th:value="${order.id}"/>
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-error-container hover:text-error text-error transition-colors flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[16px]">delete</span> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <!-- End Thymeleaf Loop -->
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="p-md border-t border-outline-variant flex justify-between items-center text-on-surface-variant font-body-md text-body-md">
+                <span>Showing all current orders</span>
+                <div class="flex gap-xs">
+                    <button class="p-xs rounded hover:bg-surface-container disabled:opacity-50" disabled="">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button class="p-xs rounded hover:bg-surface-container">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Script for Dropdown Logic -->
+<script>
+    function toggleDropdown(event) {
+        // Prevent the click from immediately bubbling up to the document
+        event.stopPropagation();
+
+        // Close all other open dropdowns first
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            if (menu !== event.target.nextElementSibling) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // Toggle the one we clicked
+        const menu = event.target.nextElementSibling;
+        menu.classList.toggle('hidden');
+    }
+
+    // Close the dropdown if the user clicks anywhere else on the page
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.action-cell')) {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.add('hidden');
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
