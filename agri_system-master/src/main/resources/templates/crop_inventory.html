@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Crop Inventory - AgriManage</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#dfe0e0",
+                        "secondary": "#5d5f5f",
+                        "surface-container-high": "#e8e8e8",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454747",
+                        "background": "#f9f9f9",
+                        "inverse-surface": "#303030",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c2c9bb",
+                        "surface-dim": "#dadada",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-fixed": "#dde4dd",
+                        "on-surface": "#1b1b1b",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c1c8c1",
+                        "primary": "#154212",
+                        "surface-container-low": "#f3f3f3",
+                        "outline": "#72796e",
+                        "primary-container": "#2d5a27",
+                        "on-tertiary-container": "#bec5bd",
+                        "on-tertiary-fixed": "#161d19",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#002201",
+                        "surface-tint": "#3b6934",
+                        "on-secondary-container": "#616363",
+                        "surface-bright": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#414843",
+                        "primary-fixed": "#bcf0ae",
+                        "surface": "#f9f9f9",
+                        "primary-fixed-dim": "#a1d494",
+                        "surface-container": "#eeeeee",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1b1b1b",
+                        "on-primary-container": "#9dd090",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#4b524c",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-surface-variant": "#42493e",
+                        "tertiary": "#343b36",
+                        "inverse-primary": "#a1d494"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "sm": "12px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Small utility to ensure text clamping on crop names */
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg h-full flex antialiased">
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold">
+            AM
+        </div>
+        <div>
+            <h1 class="font-headline-md text-[20px] font-bold text-primary leading-tight">AgriManage</h1>
+            <p class="font-label-md text-[12px] text-on-surface-variant">Farm Operations</p>
+        </div>
+    </div>
+    <nav class="flex-1 flex flex-col gap-sm">
+        <!-- Dashboard -->
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100" th:href="@{/}">
+            <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <!-- Crop Inventory -->
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors" th:href="@{/crop_inventory}">
+            <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+            <span>Crop Inventory</span>
+        </a>
+        <a class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100" th:href="@{/order_m}">
+            <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+            <span>Orders</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300 mt-auto" th:href="@{/logout}">
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- Main Content Area -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+    <!-- TopNavBar -->
+    <header class="bg-surface fixed top-0 right-0 w-[calc(100%-16rem)] z-40 border-b border-outline-variant flex justify-between items-center h-16 px-margin-desktop">
+        <div class="flex items-center">
+            <h2 class="font-title-lg text-[20px] text-primary font-bold">Crop Inventory</h2>
+        </div>
+        <div class="flex items-center gap-md border border-outline-variant rounded-full px-md py-xs bg-surface-container-lowest">
+            <span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+            <input class="bg-transparent border-none focus:ring-0 text-[14px] text-on-surface placeholder:text-on-surface-variant w-48 outline-none" placeholder="Search crops..." type="text"/>
+        </div>
+        <div class="flex items-center gap-md text-on-surface-variant">
+
+            <div class="flex flex-col text-right">
+                <span class="font-title-lg text-[16px] text-on-surface font-semibold" th:text="${loggedInUser?.username}">John Doe</span>
+                <span class="font-label-md text-[12px] text-primary" th:text="${loggedInUser?.role}">Farmer</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Inventory Content -->
+    <main class="flex-1 pt-24 px-margin-desktop pb-margin-desktop bg-[#F0F7EF]">
+
+        <!-- Header Actions -->
+        <div class="flex justify-between items-center mb-xl">
+            <h3 class="text-[24px] font-semibold text-on-surface">Current Batches</h3>
+            <button id="openAddModalBtn" class="bg-primary text-on-primary hover:bg-primary-container px-md py-sm rounded-lg text-[14px] font-medium flex items-center gap-xs transition-colors shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Add New Batch
+            </button>
+        </div>
+
+        <!-- Inventory Grid -->
+        <div id="inventoryGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+
+            <div th:each="crop : ${crops}" class="crop-card bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_12px_rgba(45,90,39,0.05)] p-lg flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex justify-between items-start mb-md">
+                    <h2 class="text-[20px] font-bold text-on-surface line-clamp-1 crop-name-display" th:text="${crop.cropName}">Crop Name</h2>
+                    <span class="bg-primary-container/10 text-primary-container px-sm py-xs rounded-full text-[11px] font-bold uppercase tracking-wider shrink-0">Batch</span>
+                </div>
+
+                <hr class="border-t border-outline-variant mb-md">
+
+                <div class="grid grid-cols-2 gap-y-sm gap-x-md mb-md">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Stock Level</span>
+                        <span class="text-[16px] font-semibold text-on-surface"><span class="crop-stock-display" th:text="${crop.stockLevel}">0</span> <span class="text-[12px] font-normal text-on-surface-variant">Units</span></span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Price/Unit</span>
+                        <span class="text-[16px] font-semibold text-on-surface">$<span class="crop-price-display" th:text="${crop.pricePerUnit}">0.00</span></span>
+                    </div>
+                    <div class="flex flex-col col-span-2 mt-xs">
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Date Added</span>
+                        <span class="text-[14px] text-on-surface crop-date-display" th:text="${crop.dateAdded}">YYYY-MM-DD</span>
+                    </div>
+                </div>
+
+                <!-- Show the uploaded image if it exists in the database -->
+                <img th:if="${crop.imageFileName != null and !crop.imageFileName.isEmpty()}"
+                     th:src="@{'/uploads/' + ${crop.imageFileName}}"
+                     alt="Crop Image"
+                     class="w-full h-[160px] object-cover rounded-lg mb-md crop-img-display">
+
+                <!-- Fallback image if no image was uploaded -->
+                <img th:unless="${crop.imageFileName != null and !crop.imageFileName.isEmpty()}"
+                     src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                     alt="Crop Image Placeholder"
+                     class="w-full h-[160px] object-cover rounded-lg mb-md crop-img-display">
+
+                <hr class="border-t border-outline-variant mb-md mt-auto">
+
+                <div class="flex justify-end gap-sm mt-auto">
+                    <!-- Edit Button -->
+                    <button type="button" class="edit-btn px-sm py-xs bg-surface-container border border-outline-variant text-on-surface text-[13px] font-medium rounded-md hover:bg-surface-variant transition-colors"
+                            th:data-id="${crop.id}"
+                            th:data-name="${crop.cropName}"
+                            th:data-stock="${crop.stockLevel}"
+                            th:data-price="${crop.pricePerUnit}"
+                            th:data-date="${crop.dateAdded}">
+                        Edit
+                    </button>
+
+                    <!-- Delete Button Form -->
+                    <form th:action="@{/crop/delete}" method="POST" onsubmit="return confirm('Are you sure you want to delete this crop batch?');">
+                        <input type="hidden" name="id" th:value="${crop.id}"/>
+                        <button type="submit" class="px-sm py-xs bg-error text-on-error text-[13px] font-medium rounded-md hover:bg-error-container hover:text-error transition-colors">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Reusable Modal (Add / Edit) -->
+<div id="batchModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] hidden items-center justify-center">
+    <div class="bg-surface rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transform transition-all">
+        <!-- Modal Header -->
+        <div class="px-lg py-md border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+            <h3 id="modalTitle" class="text-[18px] font-semibold text-on-surface">Add New Batch</h3>
+            <button id="closeTopBtn" class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Modal Form with Hidden ID Input added -->
+        <form id="batchForm" th:action="@{/crop/add}" method="POST" enctype="multipart/form-data">
+
+            <!-- Hidden input to store the crop ID when editing -->
+            <input type="hidden" id="batchId" name="id">
+
+            <div class="p-lg flex flex-col gap-md bg-surface-container-lowest">
+                <!-- Crop Name -->
+                <div class="flex flex-col gap-xs">
+                    <label for="batchName" class="text-[13px] font-semibold text-on-surface">Crop Name</label>
+                    <input type="text" id="batchName" name="cropName" placeholder="e.g., Winter Wheat" required class="px-sm py-sm border border-outline-variant rounded-md text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-surface">
+                </div>
+
+                <!-- Crop Image -->
+                <div class="flex flex-col gap-xs">
+                    <label for="batchImage" class="text-[13px] font-semibold text-on-surface">Crop Image</label>
+                    <input type="file" id="batchImage" name="cropImage" accept="image/*" class="px-sm py-xs border border-outline-variant rounded-md text-[14px] bg-surface file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-[13px] file:font-medium file:bg-primary-container/10 file:text-primary hover:file:bg-primary-container/20 cursor-pointer">
+                </div>
+
+                <!-- Stock and Price -->
+                <div class="grid grid-cols-2 gap-md">
+                    <div class="flex flex-col gap-xs">
+                        <label for="stockLevel" class="text-[13px] font-semibold text-on-surface">Stock Level</label>
+                        <input type="number" id="stockLevel" name="stockLevel" placeholder="e.g., 1200" required class="px-sm py-sm border border-outline-variant rounded-md text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-surface">
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <label for="pricePerUnit" class="text-[13px] font-semibold text-on-surface">Price per Unit ($)</label>
+                        <input type="number" id="pricePerUnit" name="pricePerUnit" placeholder="e.g., 5.50" step="0.01" required class="px-sm py-sm border border-outline-variant rounded-md text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-surface">
+                    </div>
+                </div>
+
+                <!-- Date Added -->
+                <div class="flex flex-col gap-xs">
+                    <label for="dateAdded" class="text-[13px] font-semibold text-on-surface">Date Added</label>
+                    <input type="date" id="dateAdded" name="dateAdded" required class="px-sm py-sm border border-outline-variant rounded-md text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-surface">
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-lg py-md border-t border-outline-variant bg-surface-container flex justify-end gap-sm">
+                <button type="button" id="cancelBtn" class="px-md py-sm bg-surface border border-outline-variant text-on-surface text-[14px] font-medium rounded-lg hover:bg-surface-variant transition-colors">Cancel</button>
+                <button type="submit" id="saveBtn" class="px-md py-sm bg-primary text-on-primary text-[14px] font-medium rounded-lg hover:bg-primary-container transition-colors shadow-sm">Save Batch</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Javascript Logic -->
+<script>
+    const modal = document.getElementById('batchModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const form = document.getElementById('batchForm');
+
+    // Inputs
+    const inputId = document.getElementById('batchId');
+    const inputName = document.getElementById('batchName');
+    const inputImage = document.getElementById('batchImage');
+    const inputStock = document.getElementById('stockLevel');
+    const inputPrice = document.getElementById('pricePerUnit');
+    const inputDate = document.getElementById('dateAdded');
+
+    // Open Modal to ADD
+    document.getElementById('openAddModalBtn').addEventListener('click', () => {
+        modalTitle.textContent = 'Add New Batch';
+        form.action = '/crop/add'; // Point form to ADD route
+        form.reset();
+        inputId.disabled = true; // Don't send an ID when adding
+        inputImage.required = true;
+        modal.style.display = 'flex';
+    });
+
+    // Handle Edit Clicks using Event Delegation
+    document.getElementById('inventoryGrid').addEventListener('click', (e) => {
+        if (e.target.classList.contains('edit-btn')) {
+            const btn = e.target;
+
+            modalTitle.textContent = 'Edit Crop Batch';
+            form.action = '/crop/edit'; // EDIT route
+            inputId.disabled = false;
+
+            inputId.value = btn.getAttribute('data-id');
+            inputName.value = btn.getAttribute('data-name');
+            inputStock.value = btn.getAttribute('data-stock');
+            inputPrice.value = btn.getAttribute('data-price');
+            inputDate.value = btn.getAttribute('data-date');
+
+            inputImage.required = false; // Image isn't required when editing
+            modal.style.display = 'flex';
+        }
+    });
+
+    // Close Modal Logic
+    const closeModal = () => {
+        modal.style.display = 'none';
+        form.reset();
+    };
+
+    document.getElementById('closeTopBtn').addEventListener('click', closeModal);
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+    // Close on outside click
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+</script>
+</body>
+</html>

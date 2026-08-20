@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Farmer Management - AgriControl</title>
+    <!-- Tailwind CSS with Forms plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#154212",
+                        "primary-container": "#2d5a27",
+                        "on-primary": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "on-surface": "#1b1b1b",
+                        "on-surface-variant": "#42493e",
+                        "surface-container": "#eeeeee",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c2c9bb",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "agri-green": "#2a5934",
+                        "agri-light-green": "#dcfce7",
+                    },
+                    "spacing": {
+                        "xs": "4px", "sm": "12px", "md": "16px", "lg": "24px", "xl": "32px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-table th { border-bottom: 1px solid #e5e7eb; background-color: #f0f7f2; }
+        .custom-table tr:not(:last-child) td { border-bottom: 1px solid #e5e7eb; }
+
+        /* Modal animation */
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-animate { animation: modalFadeIn 0.2s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-[#f4f7f4] text-on-surface font-sans h-full flex antialiased overflow-hidden">
+
+<!-- SideNavBar -->
+<aside class="bg-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-xl px-md z-50">
+    <div class="mb-xl flex items-center gap-sm px-2">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+            <span class="material-symbols-outlined text-[20px]">eco</span>
+        </div>
+        <div>
+            <h1 class="text-[18px] font-bold text-primary leading-tight">AgriControl</h1>
+            <p class="text-[11px] font-semibold text-on-surface-variant">Admin Portal</p>
+        </div>
+    </div>
+
+    <nav class="flex-1 flex flex-col gap-sm">
+        <!-- Buyer Management -->
+        <a th:href="@{/buyer_management}" class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100">
+            <span class="material-symbols-outlined" data-icon="group">group</span>
+            <span>Buyer Management</span>
+        </a>
+
+        <!-- Farmer Management -->
+        <a th:href="@{/farmer_management}" class="flex items-center gap-md px-sm py-sm rounded-md text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
+            <span>Farmer Management</span>
+        </a>
+
+        <!--Report Generation -->
+        <a th:href="@{/reports}" class="flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-surface-container transition-colors opacity-80 hover:opacity-100">
+            <span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+            <span>Report Generation</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a th:href="@{/logout}" class="group flex items-center gap-md px-sm py-sm rounded-md text-on-surface-variant font-medium hover:bg-error-container hover:text-error transition-all duration-300 mt-auto">
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300" data-icon="logout">logout</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- Main Content Area -->
+<div class="flex-1 ml-64 flex flex-col h-screen">
+
+    <!-- TopNavBar -->
+    <header class="bg-surface w-full z-40 border-b border-outline-variant flex justify-between items-center h-[70px] px-10 shrink-0">
+        <div class="flex items-center">
+            <h2 class="text-[20px] text-primary font-bold">Admin Dashboard</h2>
+        </div>
+
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-md text-on-surface-variant border-gray-300">
+                <div class="flex flex-col text-right">
+                    <span class="text-[16px] text-on-surface font-semibold" th:text="${loggedInUser?.username}">Jane Admin</span>
+                    <span class="text-[12px] text-primary" th:text="${loggedInUser?.role}">System Administrator</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dynamic Canvas -->
+    <main class="flex-1 overflow-y-auto p-10">
+
+        <!-- Farmer Management Header -->
+        <div class="max-w-[1200px] mx-auto mb-8 flex justify-between items-start">
+            <div>
+                <h2 class="text-[36px] font-bold text-gray-900 tracking-tight">Farmer Management</h2>
+                <p class="text-[15px] text-gray-600 mt-1">Manage active farmers, farm locations, and operational status.</p>
+            </div>
+            <button id="btn-add-farmer" class="px-5 py-2.5 bg-[#26532b] text-white text-[14px] font-semibold rounded-md hover:bg-[#1a3b1e] transition-colors shadow-sm flex items-center gap-2 mt-2">
+                <span class="material-symbols-outlined text-[18px]">person_add</span>
+                Add New Farmer
+            </button>
+        </div>
+
+        <!-- Farmer Management Card -->
+        <div class="max-w-[1200px] mx-auto bg-white border border-gray-200 rounded-xl shadow-sm">
+
+            <!-- Filters Row -->
+            <div class="p-6 flex gap-4 border-b border-gray-200">
+                <div class="flex-1 relative">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400 text-[20px]">search</span>
+                    <input type="text" placeholder="Search by Username or Email..." class="w-full border border-gray-300 rounded-md py-2.5 pl-10 pr-4 text-[14px] text-gray-700 focus:outline-none focus:ring-1 focus:ring-agri-green focus:border-agri-green">
+                </div>
+
+                <div class="relative min-w-[160px]">
+                    <label class="absolute -top-2 left-2 bg-white px-1 text-[10px] font-bold text-gray-500 uppercase tracking-wide">Role</label>
+                    <select class="w-full border border-gray-300 rounded-md py-2.5 px-4 text-[14px] text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-agri-green appearance-none">
+                        <option>All Roles</option>
+                        <option>Farmer</option>
+                        <option>Buyer</option>
+                        <option>Admin</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-gray-500 pointer-events-none">expand_more</span>
+                </div>
+
+                <button class="px-5 py-2.5 border border-gray-300 text-gray-700 text-[14px] font-semibold rounded-md hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Filter
+                </button>
+            </div>
+
+            <!-- Data Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left custom-table" id="farmer-table">
+                    <thead>
+                    <tr>
+                        <th class="py-3 px-6 text-[12px] font-bold text-gray-600 tracking-wide uppercase">ID</th>
+                        <th class="py-3 px-6 text-[12px] font-bold text-gray-600 tracking-wide uppercase">Email</th>
+                        <th class="py-3 px-6 text-[12px] font-bold text-gray-600 tracking-wide uppercase">Username</th>
+                        <th class="py-3 px-6 text-[12px] font-bold text-gray-600 tracking-wide uppercase">Role</th>
+                        <th class="py-3 px-6 text-[12px] font-bold text-gray-600 tracking-wide uppercase text-right">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-[14px] text-gray-800 bg-white">
+
+                    <!-- Dynamic Thymeleaf Loop -->
+                    <tr th:each="farmer : ${farmers}" class="hover:bg-gray-50 transition-colors group">
+                        <td class="py-4 px-6 text-gray-900 font-medium data-id" th:text="${farmer.id}">101</td>
+                        <td class="py-4 px-6 text-gray-600 data-email" th:text="${farmer.email}">robert@example.com</td>
+                        <td class="py-4 px-6 font-semibold text-gray-900 data-username" th:text="${farmer.username}">robert_j</td>
+                        <td class="py-4 px-6 text-gray-600 data-role" th:text="${farmer.role}">Farmer</td>
+                        <td class="py-4 px-6 text-right space-x-3">
+                            <button class="btn-edit text-gray-600 font-medium hover:text-gray-900 text-[13px]">Edit</button>
+                            <button class="btn-delete text-red-600 font-medium hover:text-red-800 text-[13px]">Delete</button>
+                        </td>
+                    </tr>
+
+                    <!-- Fallback message if no farmers exist -->
+                    <tr th:if="${#lists.isEmpty(farmers)}">
+                        <td colspan="5" class="py-8 text-center text-gray-500 font-medium">No verified farmers found.</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="p-6 flex justify-between items-center text-[14px] text-gray-600 bg-white rounded-b-xl border-t border-gray-200">
+                <span th:text="'Showing ' + ${#lists.size(farmers)} + ' verified farmers'">Showing 0 verified farmers</span>
+                <div class="flex items-center gap-1">
+                    <button class="p-1 text-gray-400 hover:text-gray-700"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+                    <button class="w-8 h-8 flex items-center justify-center rounded-md bg-[#26532b] font-semibold text-white">1</button>
+                    <button class="p-1 text-gray-400 hover:text-gray-700"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!--  Add / Edit User -->
+<div id="modal-farmer-form" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[100] hidden items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col modal-animate">
+        <div class="px-8 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <h3 id="form-modal-title" class="text-[20px] font-bold text-gray-900">Add New User</h3>
+            <button class="close-modal text-gray-400 hover:text-gray-800 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form id="farmerForm" method="POST" class="p-8 flex flex-col gap-5">
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="text-[13px] font-bold text-gray-700">ID (Auto-Generated for New)</label>
+                    <input type="text" id="input-id" name="id" placeholder="Auto" class="px-4 py-2.5 border border-gray-300 rounded-md text-[14px] bg-gray-100 outline-none" readonly>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-[13px] font-bold text-gray-700">Username</label>
+                    <input type="text" id="input-username" name="username" placeholder="e.g., john_doe" required class="px-4 py-2.5 border border-gray-300 rounded-md text-[14px] outline-none focus:border-agri-green focus:ring-1 focus:ring-agri-green">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="text-[13px] font-bold text-gray-700">Email Address</label>
+                    <input type="email" id="input-email" name="email" placeholder="e.g., john@example.com" required class="px-4 py-2.5 border border-gray-300 rounded-md text-[14px] outline-none focus:border-agri-green focus:ring-1 focus:ring-agri-green">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-[13px] font-bold text-gray-700">Role</label>
+                    <div class="relative">
+                        <select id="input-role" name="role" class="w-full appearance-none border border-gray-300 rounded-md py-2.5 px-4 text-gray-700 text-[14px] focus:outline-none focus:ring-1 focus:ring-agri-green focus:border-agri-green bg-white">
+                            <option value="FARMER">Farmer</option>
+                            <option value="BUYER">Buyer</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-end gap-3 pt-5 border-t border-gray-100">
+                <button type="button" class="close-modal px-5 py-2.5 bg-white border border-gray-300 text-gray-700 text-[14px] font-semibold rounded-md hover:bg-gray-50 transition-colors">Cancel</button>
+                <button type="submit" id="form-submit-btn" class="px-5 py-2.5 bg-agri-green text-white text-[14px] font-semibold rounded-md hover:bg-primary-container transition-colors shadow-sm">Save Details</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation -->
+<div id="modal-delete" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[100] hidden items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-8 modal-animate text-center">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4 text-red-600">
+            <span class="material-symbols-outlined text-[32px]">warning</span>
+        </div>
+        <h3 class="text-[22px] font-bold text-gray-900 mb-2">Delete User?</h3>
+        <p class="text-gray-600 text-[14px] mb-8">Are you sure you want to remove <strong id="delete-user-name" class="text-gray-900">this user</strong>? This action cannot be undone.</p>
+
+        <form th:action="@{/admin/user/delete}" method="POST" class="flex gap-3">
+            <input type="hidden" id="delete-user-id" name="id">
+            <button type="button" class="close-delete-modal flex-1 py-2.5 bg-white border border-gray-300 text-gray-800 text-[14px] font-semibold rounded-md hover:bg-gray-50 transition-colors">Cancel</button>
+            <button type="submit" class="flex-1 py-2.5 bg-red-600 text-white text-[14px] font-semibold rounded-md hover:bg-red-700 transition-colors shadow-sm">Delete</button>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript Logic -->
+<script>
+    const formModal = document.getElementById('modal-farmer-form');
+    const deleteModal = document.getElementById('modal-delete');
+    const farmerForm = document.getElementById('farmerForm');
+    const formTitle = document.getElementById('form-modal-title');
+    const formSubmitBtn = document.getElementById('form-submit-btn');
+
+    const inputId = document.getElementById('input-id');
+    const inputUsername = document.getElementById('input-username');
+    const inputEmail = document.getElementById('input-email');
+    const inputRole = document.getElementById('input-role');
+    const deleteUserId = document.getElementById('delete-user-id');
+
+    function openFormModal(isEdit = false) {
+        formTitle.textContent = isEdit ? 'Edit User Details' : 'Add New User';
+        formSubmitBtn.textContent = isEdit ? 'Update Changes' : 'Save Details';
+        // Dynamically change where the form submits
+        farmerForm.action = isEdit ? '/admin/user/edit' : '/admin/user/add';
+
+        formModal.classList.remove('hidden');
+        formModal.classList.add('flex');
+    }
+
+    function closeModals() {
+        formModal.classList.add('hidden');
+        formModal.classList.remove('flex');
+        deleteModal.classList.add('hidden');
+        deleteModal.classList.remove('flex');
+        farmerForm.reset();
+    }
+
+    document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', closeModals));
+    document.querySelectorAll('.close-delete-modal').forEach(btn => btn.addEventListener('click', closeModals));
+    window.addEventListener('click', (e) => { if (e.target === formModal || e.target === deleteModal) closeModals(); });
+
+    // Open ADD Modal
+    document.getElementById('btn-add-farmer').addEventListener('click', () => {
+        farmerForm.reset();
+        inputId.disabled = true; // Don't send an ID when adding
+        inputId.value = '';
+        openFormModal(false);
+    });
+
+    // Table click listener (Edit / Delete)
+    document.getElementById('farmer-table').addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (!row) return;
+
+        if (e.target.classList.contains('btn-edit')) {
+            inputId.disabled = false; // We need the ID for editing
+            inputId.value = row.querySelector('.data-id').innerText;
+            inputEmail.value = row.querySelector('.data-email').innerText;
+            inputUsername.value = row.querySelector('.data-username').innerText;
+            inputRole.value = row.querySelector('.data-role').innerText.toUpperCase();
+            openFormModal(true);
+        }
+
+        if (e.target.classList.contains('btn-delete')) {
+            document.getElementById('delete-user-name').innerText = row.querySelector('.data-username').innerText;
+            deleteUserId.value = row.querySelector('.data-id').innerText;
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+        }
+    });
+</script>
+</body>
+</html>
